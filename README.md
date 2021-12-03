@@ -88,9 +88,34 @@ Add this line or a simliar one to your `~.vimrc`:
 vmap <Leader>z :call I18nTranslateString()<CR>
 vmap <Leader>dt :call I18nDisplayTranslation()<CR>
 ```
+
 ## Installation
 
 Install via [pathogen.vim](https://github.com/tpope/vim-pathogen), simply copy and paste:
 
     cd ~/.vim/bundle
-    git clone git://github.com/stefanoverna/vim-i18n.git
+    git clone git://github.com/hexatridecimal/vim-i18n.git
+
+For [Janus vim]() simply clone the repo into ~/vim/janus/vim/tools and
+add the following to your .vimrc.
+
+
+```vim
+call janus#load_pathogen()
+```
+
+Then for either option add a keymap to .vimrc.
+
+
+```vim
+vmap <Leader>x :call I18nTranslateString()<CR>
+vmap <Leader>dt :call I18nDisplayTranslation()<CR>
+```
+
+And set the path for the rails repo you will be editing.
+
+```
+export CURRENT_RAILS_REPO=/Users/yourname/dev/someRailsRepo
+```
+
+The locales file at config/locales/en.yml will be edited.

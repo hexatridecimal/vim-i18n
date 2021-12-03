@@ -14,13 +14,13 @@ function! I18nTranslateString()
   if &filetype == 'eruby' || &filetype == 'eruby.html' || &filetype == 'slim' || &filetype == 'haml'
     let fullKey = s:determineFullKey(key)
     if IsSyntaxRuby() != -1
-      let @x = s:generateI18nCall(key, variables, "t('", "')")
+      let @x = s:generateI18nCall(key, variables, 't(".', '")')
     else
-      let @x = s:generateI18nCall(key, variables, "<%= t('", "') %>")
+      let @x = s:generateI18nCall(key, variables, '=t(".', '")')
     endif
     call s:addStringToYamlStore(text, fullKey)
   else
-    let @x = s:generateI18nCall(key, variables, "t('", "')")
+    let @x = s:generateI18nCall(key, variables, 't(".', '")')
     call s:addStringToYamlStore(text, key)
   endif
   " replace selection
@@ -121,18 +121,20 @@ endfunction
 function! s:addStringToYamlStore(text, key)
   let yaml_path = s:askForYamlPath()
   let escaped_text = shellescape(a:text)
-  let cmd = s:install_path . "/add_yaml_key '" . yaml_path . "' '" . a:key . "' " . escaped_text
+  let cmd = s:install_path . "/call.rb '" . yaml_path . "' '" . expand('%:p') . "' '" . a:key . "' " . escaped_text
   call system(cmd)
 endfunction
 
 function! s:askForYamlPath()
   call inputsave()
-  let path = ""
+  if !$CURRENT_RAILS_REPO
+    let path = input("Full path to Rails repo: ")
+    let $CURRENT_RAILS_REPO = path
+  endif
   if exists('g:I18nYamlPath')
     let path = g:I18nYamlPath
   else
-    let path = input('YAML store: ', 'config/locales/en.yml', 'file')
-    let g:I18nYamlPath = path
+    let g:I18nYamlPath = $CURRENT_RAILS_REPO . "/config/locales/en.yml"
   endif
   call inputrestore()
   return path
